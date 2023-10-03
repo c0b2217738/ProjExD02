@@ -87,7 +87,7 @@ def main():
             kk_rct.move_ip(-sub_mv[0], -sub_mv[1])
 
         #こうかとんの移動に合わせて画像を変える 
-        for t, img in mv_img.items():
+        for key, img in mv_img.items():
             if sub_mv[0] == t[0] and sub_mv[1] == t[1]:
                 screen.blit(img, kk_rct)
             #何も入力されていない時
