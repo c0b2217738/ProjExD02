@@ -12,11 +12,26 @@ move_d = {
     pg.K_RIGHT:(+5, 0),
 }
 
+def cheak_inout(obj_rct:pg.Rect):
+    """
+    オブジェクトが画面内外どちらにあるかを判定、真理値タプルで返す
+    obj_rctはこうかとんsurfaceのrect
+    戻り値はタプル(横方向結果,縦判定結果)
+    """
+    yoko, tate = True, True
+    if obj_rct.left < 0 or WIDTH < obj_rct.right:
+        yoko = False
+    if obj_rct.top < 0 or HEIGHT < obj_rct.bottom:
+        tate = False
+    return yoko, tate
+
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
+    bg_rct = bg_img.get_rect()
 
     """こうかとん"""
     kk_img = pg.image.load("ex02/fig/3.png")
@@ -41,7 +56,7 @@ def main():
             if event.type == pg.QUIT: 
                 return
 
-        screen.blit(bg_img, [0, 0])
+        screen.blit(bg_img, bg_rct)
 
         key_lst = pg.key.get_pressed()
         sub_mv = [0,0]
@@ -50,9 +65,16 @@ def main():
                 sub_mv[0] += mv[0]
                 sub_mv[1] += mv[1]
         kk_rct.move_ip(sub_mv[0], sub_mv[1])
+        if cheak_inout(kk_rct) != (True,True):
+            kk_rct.move_ip(-sub_mv[0], -sub_mv[1])
         screen.blit(kk_img, kk_rct)
 
         bd_rct.move_ip(vx,vy)
+        yoko, tate = cheak_inout(bd_rct)
+        if not yoko :
+            vx *= -1
+        if not tate :
+            vy *= -1
         screen.blit(bd_img, bd_rct)
         pg.display.update()
         tmr += 1
