@@ -88,7 +88,7 @@ def main():
 
         #こうかとんの移動に合わせて画像を変える 
         for key, img in mv_img.items():
-            if sub_mv[0] == t[0] and sub_mv[1] == t[1]:
+            if sub_mv[0] == key[0] and sub_mv[1] == key[1]:
                 screen.blit(img, kk_rct)
             #何も入力されていない時
             if sub_mv == [0,0]: 
