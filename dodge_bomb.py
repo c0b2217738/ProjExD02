@@ -11,6 +11,18 @@ move_d = {
     pg.K_LEFT:(-5,0),
     pg.K_RIGHT:(+5, 0),
 }
+kk_img = pg.image.load("ex02/fig/3.png")
+kk_img_r = pg.transform.flip(kk_img, True, False)
+mv_img = { #画像保存場所
+    (-5, 0):pg.transform.rotozoom(kk_img, 0, 2.0),
+    (-5,-5):pg.transform.rotozoom(kk_img, -45, 2.0),#斜め左上
+    (+5,0):pg.transform.rotozoom(kk_img_r, 0, 2.0),#反転
+    (-5,+5):pg.transform.rotozoom(kk_img, 45, 2.0),#斜め左下
+    (0,-5):pg.transform.rotozoom(kk_img_r, 90, 2.0),#上
+    (+5,-5):pg.transform.rotozoom(kk_img_r, 45, 2.0),#斜め右上
+    (+5, +5):pg.transform.rotozoom(kk_img_r, -45, 2.0),#斜め右下
+    (0,+5):pg.transform.rotozoom(kk_img_r, -90, 2.0),#下
+}
 
 def cheak_inout(obj_rct:pg.Rect):
     """
@@ -35,7 +47,7 @@ def main():
 
     """こうかとん"""
     kk_img = pg.image.load("ex02/fig/3.png")
-    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)#通常
     kk_rct = kk_img.get_rect()
     kk_rct.center = (900,400)
 
@@ -55,12 +67,13 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
-        if kk_rct.colliderect(bd_rct): 
+        if kk_rct.colliderect(bd_rct): #鳥と爆弾が触れたとき 
             print("ゲームオーバー")
             return
 
         screen.blit(bg_img, bg_rct)
 
+        #動きつける
         key_lst = pg.key.get_pressed()
         sub_mv = [0,0]
         for key, mv in move_d.items():
@@ -68,9 +81,19 @@ def main():
                 sub_mv[0] += mv[0]
                 sub_mv[1] += mv[1]
         kk_rct.move_ip(sub_mv[0], sub_mv[1])
+
+        #画面外に行ってしまった時
         if cheak_inout(kk_rct) != (True,True):
             kk_rct.move_ip(-sub_mv[0], -sub_mv[1])
-        screen.blit(kk_img, kk_rct)
+
+        #こうかとんの移動に合わせて画像を変える 
+        for t, img in mv_img.items():
+            if sub_mv[0] == t[0] and sub_mv[1] == t[1]:
+                screen.blit(img, kk_rct)
+            #何も入力されていない時
+            if sub_mv == [0,0]: 
+                screen.blit(kk_img, kk_rct)
+                
 
         bd_rct.move_ip(vx,vy)
         yoko, tate = cheak_inout(bd_rct)
